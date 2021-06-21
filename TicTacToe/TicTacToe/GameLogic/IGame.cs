@@ -4,7 +4,7 @@ namespace TicTacToe.GameLogic
 {
     public interface IGame
     {
-        void StartGame();
+        void StartRound();
         GameBoard MakeMove(PlayerMove move);
     }
 }

@@ -2,7 +2,7 @@
 {
     public class GameBoard
     {
-        public TileState[] Positions { get; set; }
+        public GamePiece?[,] Positions { get; set; }
 
         public Player Player1 { get; set; } // goes first
 

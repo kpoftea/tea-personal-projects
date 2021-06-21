@@ -10,16 +10,15 @@
     }
 
     public enum GamePiece
-    {
-        O = 0,
-        X = 1
+    {      
+        X = 1,
+        O = 2
     }
 
-    public enum TileState
+    public enum MoveResult
     {
-        Blank = 0,
-        XOccupied = 1,
-        OOccupied = 2,
-        Error = -1
+        CannotMove = 0,
+        ValidMove = 1, 
+        ErrorOccupiedPosition = -1, 
     }
 }
