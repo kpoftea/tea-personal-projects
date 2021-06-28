@@ -25,6 +25,10 @@ namespace TicTacToe.GameLogic
 
         private int MinMovesToWin => BoardSize + BoardSize - 1;
 
+        private int XWonValue => (int)GamePiece.X * BoardSize;
+
+        private int OWonValue => (int)GamePiece.O * BoardSize;
+
         public TicTacToeGame(string player1Name, string player2Name)
         {
             TicTacToeBoard = new GameBoard()
@@ -50,7 +54,7 @@ namespace TicTacToe.GameLogic
         {
             GameState = GameState.InProgress;
             CurrentRound++;
-            TurnNumber++;
+            TurnNumber = 1;
             if (CurrentRound % 2 == 0)
             {
                 // Switch who goes first every other round
@@ -71,17 +75,128 @@ namespace TicTacToe.GameLogic
                 RoundHistory[CurrentRound].MoveHistory.Add(move);
                 TurnNumber++;
             }
-            if(TurnNumber >= 5)
+            if(TurnNumber >= MinMovesToWin)
             {
-                CheckWinState();
+                GameState = CheckGameState();
             }
 
             return TicTacToeBoard;
         }
 
-        private void CheckWinState()
+        private GameState CheckWinValue(int pieceScore)
         {
-            throw new NotImplementedException();
+            // check values for a win
+            if (pieceScore == XWonValue)
+            {
+                // set X won
+                return GameState.Player1Win;
+            }
+            if (pieceScore == OWonValue)
+            {
+                // set O won
+                return GameState.Player2Win;
+            }
+            else
+            {
+                return GameState.InProgress;
+            }
+        }
+
+        private GameState CheckGameState()
+        {
+            if(TurnNumber <= 9)
+            {
+                // check vertical
+                int piecesValue;
+                for(int x = 0; x < BoardSize; x++)
+                {
+                    piecesValue = 0;
+                    for (int y = 0; y < BoardSize; y++)
+                    {
+                        var piece = TicTacToeBoard.Positions[x, y];
+                        
+                        if(piece == null) // streak stopped, move to next line
+                        {
+                            piecesValue = 0;
+                            break;
+                        }
+                        piecesValue += (int)piece;
+                    }
+                    var verticalCheckResult = CheckWinValue(piecesValue);
+                    if(verticalCheckResult != GameState.InProgress)
+                    {
+                        return verticalCheckResult;
+                    }
+                    //else check next line
+                }
+                // check horizontal
+                for (int x = 0; x < BoardSize; x++)
+                {
+                    piecesValue = 0;
+                    for (int y = 0; y < BoardSize; y++)
+                    {
+                        var piece = TicTacToeBoard.Positions[y, x];
+
+                        if (piece == null) // streak stopped, move to next line
+                        {
+                            piecesValue = 0;
+                            break;
+                        }
+                        piecesValue += (int)piece;
+                    }
+                    var horizontalCheckResult = CheckWinValue(piecesValue);
+                    if (horizontalCheckResult != GameState.InProgress)
+                    {
+                        return horizontalCheckResult;
+                    }
+                    //else check next line
+                }
+                // check downwards diagonal
+                piecesValue = 0;
+                for (int x = 0; x < BoardSize; x++)
+                {
+                    var piece = TicTacToeBoard.Positions[x, x];
+
+                    if (piece == null) // streak stopped, no win
+                    {
+                        break;
+                    }
+                    piecesValue += (int)piece;
+                    var downwardsDiagonalCheckResult = CheckWinValue(piecesValue);
+                    if (downwardsDiagonalCheckResult != GameState.InProgress)
+                    {
+                        return downwardsDiagonalCheckResult;
+                    }
+                    //else  check next row
+                }
+                // check upwards diagonal
+                for (int x = 0; x < BoardSize; x++)
+                {
+                    piecesValue = 0;
+                    for (int y = 2; y > 0; y--)
+                    {
+                        var piece = TicTacToeBoard.Positions[x, y];
+
+                        if (piece == null) // streak stopped, no win
+                        {
+                            break;
+                        }
+                        piecesValue += (int)piece;
+                    }
+                    var upwardsDiagonalCheckResult = CheckWinValue(piecesValue);
+                    if (upwardsDiagonalCheckResult != GameState.InProgress)
+                    {
+                        return upwardsDiagonalCheckResult;
+                    }
+                    //else  check next row
+                }
+                if (TurnNumber == 9)
+                {
+                    return GameState.Draw;
+                }
+                return GameState.InProgress;
+            }
+            return GameState.GameError; // max moves exceeded
         }
 
         private MoveResult ValidateMove(PlayerMove move)
