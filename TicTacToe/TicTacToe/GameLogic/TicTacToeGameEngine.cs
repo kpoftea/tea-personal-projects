@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using TicTacToe.Entities;
 
 namespace TicTacToe.GameLogic
 {
-    public class TicTacToeGame : IGame
+    public class TicTacToeGameEngine : IGameEngine
     {
         private GameBoard TicTacToeBoard { get; set; }
 
@@ -17,7 +15,7 @@ namespace TicTacToe.GameLogic
 
         private int TurnNumber { get; set; }
 
-        private List<GameRound> RoundHistory { get; set; }
+        public List<GameRound> RoundHistory { get; private set; }
 
         private int BoardSize => 3;
 
@@ -29,7 +27,7 @@ namespace TicTacToe.GameLogic
 
         private int OWonValue => (int)GamePiece.O * BoardSize;
 
-        public TicTacToeGame(string player1Name, string player2Name)
+        public TicTacToeGameEngine(string player1Name, string player2Name)
         {
             TicTacToeBoard = new GameBoard()
             {
@@ -64,7 +62,7 @@ namespace TicTacToe.GameLogic
             {
                 CurrentTurn = TicTacToeBoard.Player1;
             }
-            RoundHistory.Add(new GameRound());
+            RoundHistory.Add(new GameRound() { MoveHistory = new List<PlayerMove>() });
         }
 
         public GameBoard MakeMove(PlayerMove move)
@@ -72,7 +70,8 @@ namespace TicTacToe.GameLogic
             if (ValidateMove(move) == MoveResult.ValidMove)
             {
                 TicTacToeBoard.Positions[move.Position.Item1, move.Position.Item2] = CurrentTurn.GamePiece;
-                RoundHistory[CurrentRound].MoveHistory.Add(move);
+                RoundHistory[CurrentRound-1].MoveHistory.Add(move);
+                UpdateTurnHistory(move);
                 TurnNumber++;
             }
             if(TurnNumber >= MinMovesToWin)
@@ -96,10 +95,7 @@ namespace TicTacToe.GameLogic
                 // set O won
                 return GameState.Player2Win;
             }
-            else
-            {
-                return GameState.InProgress;
-            }
+            return GameState.InProgress;
         }
 
         private GameState CheckGameState()
@@ -206,21 +202,20 @@ namespace TicTacToe.GameLogic
 
             // todo: logging or messaging
 
-            if (GameState != GameState.InProgress || RoundHistory[CurrentRound].MoveHistory.Count >= MaxMoves)
+            if (GameState != GameState.InProgress || RoundHistory[CurrentRound-1].MoveHistory?.Count >= MaxMoves)
             {
                 return MoveResult.CannotMove;
             }
-            if (TicTacToeBoard.Positions[moveX, moveY] == null)
+            if (moveX < BoardSize && moveX >= 0 && moveY < BoardSize && moveY >= 0 && TicTacToeBoard.Positions[moveX, moveY] == null)
             {
                 return MoveResult.ValidMove;
             }
             return MoveResult.ErrorOccupiedPosition;
         }
 
-        private GameRound UpdateTurnHistory()
+        private void UpdateTurnHistory(PlayerMove move)
         {
-            var turn = RoundHistory[CurrentRound].MoveHistory[TurnNumber];
-            return RoundHistory[CurrentRound];
+            RoundHistory[CurrentRound-1].MoveHistory.Add(move);
         }
     }
 }
