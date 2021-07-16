@@ -55,5 +55,107 @@ namespace TicTacToeTests
             sut.MakeMove(move);           
             Assert.AreEqual(0, sut.RoundHistory[0].MoveHistory.Count);
         }
+
+        [TestMethod]
+        public void MakeMove_PlayerMakesHorizontalStreak_DeclaresWinner()
+        {
+            var sut = new TicTacToeGameEngine("B. Harmon", "V. Borgov");
+
+            sut.StartRound();
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(0, 0),
+                Piece = GamePiece.X
+            });
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(0, 1),
+                Piece = GamePiece.O
+            });
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(1, 0),
+                Piece = GamePiece.X
+            });
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(0, 2),
+                Piece = GamePiece.O
+            });
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(2, 0),
+                Piece = GamePiece.X
+            });
+            Assert.AreEqual(GameState.Player1Win, sut.GameState);
+        }
+
+        [TestMethod]
+        public void MakeMove_PlayerMakesVerticalStreak_DeclaresWinner()
+        {
+            var sut = new TicTacToeGameEngine("B. Harmon", "V. Borgov");
+
+            sut.StartRound();
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(0, 0),
+                Piece = GamePiece.X
+            });
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(1, 0),
+                Piece = GamePiece.O
+            });
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(0, 1),
+                Piece = GamePiece.X
+            });
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(2, 0),
+                Piece = GamePiece.O
+            });
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(0, 2),
+                Piece = GamePiece.X
+            });
+            Assert.AreEqual(GameState.Player1Win, sut.GameState);
+        }
+
+        [TestMethod]
+        public void MakeMove_PlayerMakesDiagonalStreak_DeclaresWinner()
+        {
+            var sut = new TicTacToeGameEngine("B. Harmon", "V. Borgov");
+
+            sut.StartRound();
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(0, 0),
+                Piece = GamePiece.X
+            });
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(1, 0),
+                Piece = GamePiece.O
+            });
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(1, 1),
+                Piece = GamePiece.X
+            });
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(2, 0),
+                Piece = GamePiece.O
+            });
+            sut.MakeMove(new PlayerMove()
+            {
+                Position = new Tuple<int, int>(2, 2),
+                Piece = GamePiece.X
+            });
+            Assert.AreEqual(GameState.Player1Win, sut.GameState);
+        }
     }
 }

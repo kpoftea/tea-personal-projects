@@ -7,7 +7,7 @@ namespace TicTacToe.GameLogic
     {
         private GameBoard TicTacToeBoard { get; set; }
 
-        private GameState GameState { get; set; }
+        public GameState GameState { get; private set; }
 
         private int CurrentRound { get; set; }
 
@@ -73,7 +73,7 @@ namespace TicTacToe.GameLogic
                 UpdateTurnHistory(move);
                 TurnNumber++;
             }
-            if(TurnNumber >= MinMovesToWin)
+            if(TurnNumber > MinMovesToWin)
             {
                 GameState = CheckGameState();
             }
