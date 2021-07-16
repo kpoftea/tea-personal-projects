@@ -53,7 +53,7 @@ namespace TicTacToeTests
                 Piece = GamePiece.X
             };
             sut.MakeMove(move);           
-            Assert.AreEqual(1, sut.RoundHistory[0].MoveHistory.Count);
+            Assert.AreEqual(0, sut.RoundHistory[0].MoveHistory.Count);
         }
     }
 }

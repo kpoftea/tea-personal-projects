@@ -70,7 +70,6 @@ namespace TicTacToe.GameLogic
             if (ValidateMove(move) == MoveResult.ValidMove)
             {
                 TicTacToeBoard.Positions[move.Position.Item1, move.Position.Item2] = CurrentTurn.GamePiece;
-                RoundHistory[CurrentRound-1].MoveHistory.Add(move);
                 UpdateTurnHistory(move);
                 TurnNumber++;
             }
